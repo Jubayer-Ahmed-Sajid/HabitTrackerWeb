@@ -296,5 +296,10 @@ C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\WebPush.dll
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\sxiccns2e7-2s4joj1dcm.gz
 C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\App_Data\push-vapid-keys.json
 C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\App_Data\push-preferences.json
-C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\aza25x68n0-fj1zzsen5s.gz
-C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\9q5kb9v209-yma8obgpdq.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\HabitTrackerWeb.sourcelink.json
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\essrbi3d08-rmjkqvnqgh.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\9q5kb9v209-j65e21rut2.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\yz1n5f04ca-jk9c09y711.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\t51tbnt1lz-pvvw7598c8.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\p677zz8buc-mfiaycyg77.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\aza25x68n0-xzjrydecr2.gz

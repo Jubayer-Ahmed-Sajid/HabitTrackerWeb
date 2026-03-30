@@ -162,3 +162,4 @@ C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\BouncyCastle.
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\WebPush.dll
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\App_Data\push-vapid-keys.json
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\App_Data\push-preferences.json
+C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\obj\Debug\net9.0\HabitTrackerWeb.Tests.sourcelink.json

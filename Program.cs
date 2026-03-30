@@ -73,7 +73,9 @@ builder.Services.AddHostedService<HabitOutcomeBackgroundService>();
 builder.Services.AddScoped<IStreakCalculatorObserver, StreakCalculatorObserver>();
 builder.Services.AddScoped<IAchievementObserver, AchievementObserver>();
 builder.Services.AddScoped<IEloCalculationObserver, EloCalculationObserver>();
+builder.Services.AddScoped<IStreakResetObserver, StreakResetObserver>();
 builder.Services.AddScoped<IHabitOutcomeSubscriber>(sp => sp.GetRequiredService<IEloCalculationObserver>());
+builder.Services.AddScoped<IHabitOutcomeSubscriber>(sp => sp.GetRequiredService<IStreakResetObserver>());
 builder.Services.AddScoped<IHabitOutcomePublisher, HabitOutcomePublisher>();
 
 builder.Services.AddTransient<ValidateHabitIsActiveHandler>();
