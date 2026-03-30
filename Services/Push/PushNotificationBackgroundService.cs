@@ -1,22 +1,25 @@
-using System.Security.Cryptography;
-using System.Text;
+using HabitTrackerWeb.Core.Contracts.Repositories;
 using HabitTrackerWeb.Core.Contracts.Services;
+using Microsoft.Extensions.Options;
 
 namespace HabitTrackerWeb.Services.Push;
 
 public sealed class PushNotificationBackgroundService : BackgroundService
 {
-    private static readonly TimeSpan DispatchInterval = TimeSpan.FromSeconds(90);
+    private static readonly TimeSpan DispatchInterval = TimeSpan.FromMinutes(2);
 
     private readonly IServiceProvider _serviceProvider;
+    private readonly PushNotificationOptions _options;
     private readonly ILogger<PushNotificationBackgroundService> _logger;
-    private readonly Dictionary<string, string> _lastNotificationSignature = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, DateOnly> _lastDailyReminderDate = new(StringComparer.Ordinal);
 
     public PushNotificationBackgroundService(
         IServiceProvider serviceProvider,
+        IOptions<PushNotificationOptions> options,
         ILogger<PushNotificationBackgroundService> logger)
     {
         _serviceProvider = serviceProvider;
+        _options = options.Value;
         _logger = logger;
     }
 
@@ -41,7 +44,7 @@ public sealed class PushNotificationBackgroundService : BackgroundService
     {
         using var scope = _serviceProvider.CreateScope();
         var pushService = scope.ServiceProvider.GetRequiredService<IPushNotificationService>();
-        var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
         if (!pushService.IsEnabled)
         {
@@ -54,39 +57,53 @@ public sealed class PushNotificationBackgroundService : BackgroundService
             return;
         }
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var nowUtc = DateTime.UtcNow;
+        var hour = Math.Clamp(_options.DailyReminderHourUtc, 0, 23);
+        var minute = Math.Clamp(_options.DailyReminderMinuteUtc, 0, 59);
+
+        if (nowUtc.Hour < hour || (nowUtc.Hour == hour && nowUtc.Minute < minute))
+        {
+            return;
+        }
+
+        var today = DateOnly.FromDateTime(nowUtc);
         foreach (var userId in userIds)
         {
-            var notifications = await notificationService.GetNotificationsAsync(userId, today, cancellationToken);
-            if (notifications.Count == 0)
+            if (_lastDailyReminderDate.TryGetValue(userId, out var lastSentDate) && lastSentDate == today)
             {
                 continue;
             }
 
-            var signature = ComputeSignature(notifications);
-            if (_lastNotificationSignature.TryGetValue(userId, out var previous)
-                && string.Equals(previous, signature, StringComparison.Ordinal))
+            var habits = await unitOfWork.Habits.GetHabitsForUserAsync(userId, activeOnly: true, cancellationToken);
+            var scheduledTodayIds = habits
+                .Where(h => HabitScheduleEvaluator.IsScheduledForDate(h, today))
+                .Select(h => h.Id)
+                .ToHashSet();
+
+            if (scheduledTodayIds.Count == 0)
             {
                 continue;
             }
 
-            _lastNotificationSignature[userId] = signature;
+            var completedTodayIds = await unitOfWork.HabitLogs.GetCompletedHabitIdsForDateAsync(userId, today, cancellationToken);
+            var incompleteCount = scheduledTodayIds.Count(id => !completedTodayIds.Contains(id));
 
-            var topNotification = notifications[0];
+            if (incompleteCount <= 0)
+            {
+                continue;
+            }
+
             var payload = new PushPayload(
-                Title: topNotification.Title,
-                Message: topNotification.Message,
-                ActionUrl: topNotification.ActionUrl,
-                Tag: $"habit-{signature[..8]}");
+                Title: "Daily habit reminder",
+                Message: $"You still have {incompleteCount} incomplete habit(s) today. Complete one now to protect momentum.",
+                ActionUrl: "/Dashboard",
+                Tag: $"daily-reminder-{today:yyyyMMdd}");
 
-            await pushService.SendAsync(userId, payload, cancellationToken);
+            var delivered = await pushService.SendAsync(userId, payload, cancellationToken);
+            if (delivered > 0)
+            {
+                _lastDailyReminderDate[userId] = today;
+            }
         }
-    }
-
-    private static string ComputeSignature(IReadOnlyList<ProductivityNotification> notifications)
-    {
-        var source = string.Join("|", notifications.Select(n => $"{n.Title}:{n.Message}:{n.Type}:{n.ActionUrl}"));
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(source));
-        return Convert.ToHexString(hash);
     }
 }

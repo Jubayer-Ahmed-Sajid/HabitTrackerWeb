@@ -5,9 +5,6 @@ C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\HabitTrackerW
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\HabitTrackerWeb.runtimeconfig.json
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\appsettings.Development.json
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\appsettings.json
-C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\openclaw_vscode\package-lock.json
-C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\openclaw_vscode\package.json
-C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\openclaw_vscode\tsconfig.json
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\HabitTrackerWeb.staticwebassets.runtime.json
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\HabitTrackerWeb.staticwebassets.endpoints.json
 C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\HabitTrackerWeb.exe

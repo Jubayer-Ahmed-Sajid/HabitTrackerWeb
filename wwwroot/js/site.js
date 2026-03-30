@@ -21,6 +21,7 @@ function setupMobileNav() {
 		if (icon) {
 			icon.classList.remove("is-open");
 		}
+		document.dispatchEvent(new CustomEvent("habit-mobile-nav-closed"));
 	};
 
 	const toggleMenu = () => {
@@ -35,6 +36,7 @@ function setupMobileNav() {
 		if (icon) {
 			icon.classList.add("is-open");
 		}
+		document.dispatchEvent(new CustomEvent("habit-mobile-nav-opened"));
 	};
 
 	toggle.addEventListener("click", (event) => {
@@ -56,6 +58,10 @@ function setupMobileNav() {
 		if (window.innerWidth >= 768) {
 			closeMenu();
 		}
+	});
+
+	document.addEventListener("habit-notification-panel-opened", () => {
+		closeMenu();
 	});
 }
 
@@ -174,6 +180,7 @@ function setupNotificationCenter() {
 	};
 
 	const openPanel = () => {
+		document.dispatchEvent(new CustomEvent("habit-notification-panel-opened"));
 		isPanelOpen = true;
 		panel.classList.remove("hidden");
 		toggle.setAttribute("aria-expanded", "true");
@@ -300,6 +307,10 @@ function setupNotificationCenter() {
 		if (event.key === "Escape") {
 			closePanel();
 		}
+	});
+
+	document.addEventListener("habit-mobile-nav-opened", () => {
+		closePanel();
 	});
 
 	pollNotifications();

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HabitTrackerWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4aa9e7c7542aa50f6e3dd092126b8f1cd6a6b527")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f9311aa329c4bc0ef6a0cb113507d1fcb4116553")]
 [assembly: System.Reflection.AssemblyProductAttribute("HabitTrackerWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HabitTrackerWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

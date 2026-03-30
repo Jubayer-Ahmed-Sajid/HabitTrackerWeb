@@ -612,7 +612,15 @@ html.dark .library-filter-btn.is-active {
   }
 
   .notification-panel {
-    right: -0.25rem;
-    width: min(22rem, calc(100vw - 1rem));
+    position: fixed;
+    top: 4.25rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    max-height: calc(100vh - 5.5rem);
+  }
+
+  .notification-panel #notificationList {
+    max-height: min(18rem, calc(100vh - 12rem));
   }
 }

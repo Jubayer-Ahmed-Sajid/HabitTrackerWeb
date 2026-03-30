@@ -93,9 +93,6 @@ C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\HabitTrackerWeb.pdb
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\HabitTrackerWeb.genruntimeconfig.cache
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\ref\HabitTrackerWeb.dll
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\HabitTrackerWeb.csproj.AssemblyReference.cache
-C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\openclaw_vscode\package-lock.json
-C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\openclaw_vscode\package.json
-C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\openclaw_vscode\tsconfig.json
 C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\Humanizer.dll
 C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
@@ -298,8 +295,8 @@ C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\App_Data\push-vapid-keys.json
 C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\App_Data\push-preferences.json
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\HabitTrackerWeb.sourcelink.json
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\essrbi3d08-rmjkqvnqgh.gz
-C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\9q5kb9v209-j65e21rut2.gz
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\yz1n5f04ca-jk9c09y711.gz
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\t51tbnt1lz-pvvw7598c8.gz
 C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\p677zz8buc-mfiaycyg77.gz
-C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\aza25x68n0-xzjrydecr2.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\9q5kb9v209-r4m597m6zj.gz
+C:\Projects\HabitTrackerWeb\obj\Debug\net9.0\compressed\aza25x68n0-bxj0d2a1v0.gz
