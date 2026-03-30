@@ -1,0 +1,58 @@
+@model HabitTrackerWeb.ViewModels.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<section class="mx-auto max-w-md">
+    <div class="panel-card relative overflow-hidden">
+        <div class="hero-blur hero-blur-orange"></div>
+        <div class="relative z-10">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Get Started</p>
+            <h1 class="mt-1 font-display text-3xl font-semibold text-slate-900 dark:text-slate-100">Create Account</h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Build your own streak system with a clean daily flow.</p>
+
+            <form asp-action="Register" method="post" class="mt-6 space-y-4">
+                @Html.AntiForgeryToken()
+                <input asp-for="ReturnUrl" type="hidden" />
+                <div asp-validation-summary="ModelOnly" class="form-error"></div>
+
+                <div>
+                    <label asp-for="DisplayName" class="form-label"></label>
+                    <input asp-for="DisplayName" class="form-input" autocomplete="name" />
+                    <span asp-validation-for="DisplayName" class="form-error"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-input" autocomplete="username" />
+                    <span asp-validation-for="Email" class="form-error"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-input" autocomplete="new-password" />
+                    <span asp-validation-for="Password" class="form-error"></span>
+                </div>
+
+                <div>
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <input asp-for="ConfirmPassword" class="form-input" autocomplete="new-password" />
+                    <span asp-validation-for="ConfirmPassword" class="form-error"></span>
+                </div>
+
+                <button type="submit" class="w-full rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="mt-5 text-sm text-slate-600 dark:text-slate-300">
+                Already have an account?
+                <a asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" class="font-semibold text-sky-500 hover:text-sky-600">Sign in</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

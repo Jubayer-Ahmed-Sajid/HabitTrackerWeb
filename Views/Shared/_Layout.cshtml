@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Habit Tracker Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            const storedTheme = localStorage.getItem("habit-theme");
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ["Sora", "sans-serif"],
+                        body: ["IBM Plex Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        glow: "0 0 0 1px rgba(56, 189, 248, 0.2), 0 15px 45px rgba(15, 23, 42, 0.3)"
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkR4j8yQp2w0T0f6JQwR7vN4+3xF4rP7k+Ow==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="min-h-full font-body text-slate-800 dark:text-slate-100">
+    <div class="app-shell">
+        <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-slate-700/80 dark:bg-slate-900/80">
+            <nav class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+                <a asp-controller="Home" asp-action="Index" class="font-display text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                    Habit Tracker Builder
+                </a>
+                <div class="hidden items-center gap-2 md:flex">
+                    <a asp-controller="Dashboard" asp-action="Index" class="nav-pill">Focus</a>
+                    <a asp-controller="Habits" asp-action="Index" class="nav-pill">Habits</a>
+                    <a asp-controller="Analytics" asp-action="Index" class="nav-pill">Analytics</a>
+                    <a href="/Integrations" class="nav-pill">Integrations</a>
+                </div>
+                <div class="flex items-center gap-2">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <div id="navNotifications" class="relative">
+                            <button id="notificationToggle" type="button" class="nav-icon-btn" aria-label="Open notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications">
+                                <span class="relative inline-flex items-center justify-center">
+                                    <i class="fa-solid fa-bell"></i>
+                                    <span id="notificationBadge" class="absolute -right-2 -top-2 hidden min-w-4 rounded-full bg-emerald-500 px-1 text-center text-[10px] font-bold leading-4 text-white"></span>
+                                </span>
+                            </button>
+
+                            <div id="notificationPanel" class="notification-panel hidden">
+                                <div class="flex items-center justify-between border-b border-slate-200/80 px-4 py-3 dark:border-slate-700/90">
+                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">Live updates</span>
+                                </div>
+                                <div class="notification-preference-row border-b border-slate-200/80 px-4 py-3 dark:border-slate-700/90">
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Push Alerts</p>
+                                        <p id="pushPreferenceState" class="text-xs text-slate-600 dark:text-slate-300">Enabled</p>
+                                    </div>
+                                    <label class="push-switch" for="pushPreferenceToggle">
+                                        <input id="pushPreferenceToggle" type="checkbox" />
+                                        <span class="push-switch-track"><span class="push-switch-thumb"></span></span>
+                                    </label>
+                                </div>
+                                <div id="notificationList" class="max-h-80 overflow-y-auto px-2 py-2"></div>
+                                <div id="notificationEmpty" class="hidden px-4 py-5 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    You are all caught up.
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="nav-icon-btn" aria-label="Sign in for notifications" title="Notifications">
+                            <i class="fa-solid fa-bell"></i>
+                        </a>
+                    }
+
+                    <button id="themeToggle" type="button" class="nav-icon-btn" aria-label="Toggle theme" title="Theme">
+                        <i id="themeToggleIcon" class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <button id="mobileNavToggle" type="button" class="nav-icon-btn md:hidden" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileNavMenu" title="Menu">
+                        <i id="mobileNavIcon" class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <partial name="_LoginPartial" />
+                </div>
+            </nav>
+
+            <div id="mobileNavMenu" class="mobile-nav-menu hidden px-4 pb-3 sm:px-6 md:hidden">
+                <div class="flex flex-col gap-1 rounded-xl border border-slate-200/80 bg-white/80 p-2 dark:border-slate-700 dark:bg-slate-900/85">
+                    <a asp-controller="Dashboard" asp-action="Index" class="mobile-nav-link">Focus</a>
+                    <a asp-controller="Habits" asp-action="Index" class="mobile-nav-link">Habits</a>
+                    <a asp-controller="Analytics" asp-action="Index" class="mobile-nav-link">Analytics</a>
+                    <a href="/Integrations" class="mobile-nav-link">Integrations</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+            @RenderBody()
+        </main>
+
+        <footer class="mx-auto mb-6 mt-10 w-full max-w-6xl px-4 text-xs text-slate-500 dark:text-slate-400 sm:px-6 lg:px-8">
+            <div class="rounded-xl border border-slate-200/70 bg-white/70 px-4 py-3 dark:border-slate-700/80 dark:bg-slate-900/80">
+                Habit Tracker Builder workspace • Built with ASP.NET Core MVC
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

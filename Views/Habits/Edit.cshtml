@@ -1,0 +1,58 @@
+@model HabitFormViewModel
+@{
+    ViewData["Title"] = "Edit Habit";
+}
+
+<section class="mx-auto max-w-3xl space-y-5">
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Edit Habit</h1>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="panel-card space-y-4">
+        @Html.AntiForgeryToken()
+
+        <div>
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-input" />
+            <span asp-validation-for="Title" class="form-error"></span>
+        </div>
+
+        <div>
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-input min-h-24"></textarea>
+            <span asp-validation-for="Description" class="form-error"></span>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+                <label asp-for="CategoryId" class="form-label">Category</label>
+                <select asp-for="CategoryId" asp-items="Model.CategoryOptions" class="form-input"></select>
+                <span asp-validation-for="CategoryId" class="form-error"></span>
+            </div>
+            <div>
+                <label asp-for="Frequency" class="form-label"></label>
+                <select asp-for="Frequency" asp-items="Html.GetEnumSelectList<HabitTrackerWeb.Core.Enums.HabitFrequency>()" class="form-input"></select>
+                <span asp-validation-for="Frequency" class="form-error"></span>
+            </div>
+        </div>
+
+        <div>
+            <label asp-for="SpecificDays" class="form-label"></label>
+            <input asp-for="SpecificDays" class="form-input" placeholder="Mon,Wed,Fri" />
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Used for Weekly / SpecificDays habits.</p>
+            <span asp-validation-for="SpecificDays" class="form-error"></span>
+        </div>
+
+        <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <input asp-for="IsActive" class="h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500" />
+            Active habit
+        </label>
+
+        <div class="flex items-center gap-2">
+            <button type="submit" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md">Update Habit</button>
+            <a asp-action="Index" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,257 @@
+@model HabitDashboardViewModel
+@{
+    ViewData["Title"] = "Focus Dashboard";
+}
+
+<section data-dashboard="true" class="space-y-6">
+    <header class="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/85 p-6 shadow-xl shadow-slate-900/5 dark:border-slate-700 dark:bg-slate-900/85">
+        <div class="hero-blur hero-blur-cyan"></div>
+        <div class="hero-blur hero-blur-orange"></div>
+
+        <div class="relative z-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">Focus Dashboard</p>
+                <h1 class="mt-2 font-display text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">@Model.Date.ToString("dddd, MMMM dd")</h1>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Your clean execution board for completing habits with momentum.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <a asp-controller="Habits" asp-action="Create" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md">
+                    <i class="fa-solid fa-plus mr-1"></i> New Habit
+                </a>
+                <a asp-controller="Analytics" asp-action="Index" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">
+                    <i class="fa-solid fa-chart-line mr-1"></i> Open Analytics
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="panel-card metric-card">
+            <p class="metric-label">Completed</p>
+            <p id="completedHabitsCount" data-completed="@Model.CompletedHabits" data-total="@Model.TotalHabits" class="metric-value text-emerald-500">@Model.CompletedHabits<span class="metric-sub">/@Model.TotalHabits</span></p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Completion Rate</p>
+            <p id="completionPercent" class="metric-value text-orange-500">@Model.CompletionPercent%</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Hot Streaks</p>
+            <p class="metric-value text-rose-500">@Model.HotStreakHabits</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Scheduled Today</p>
+            <p class="metric-value text-sky-500">@Model.TotalHabits</p>
+        </article>
+    </div>
+
+    <div class="grid gap-5 xl:grid-cols-5">
+        <article id="rewards" class="panel-card xl:col-span-3">
+            <div class="flex items-center justify-between">
+                <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Reward Center</h2>
+                <span class="rounded-lg bg-amber-100 px-2 py-1 text-xs font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
+                    LV @Model.RewardSummary.CurrentLevel
+                </span>
+            </div>
+
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">@Model.RewardSummary.MotivationalLine</p>
+
+            <div class="mt-4 rounded-xl border border-slate-200/70 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-800/70">
+                <div class="mb-2 flex items-center justify-between text-xs">
+                    <span class="font-semibold text-slate-700 dark:text-slate-300">@Model.RewardSummary.TotalPoints points</span>
+                    <span class="text-slate-500 dark:text-slate-400">@Model.RewardSummary.PointsToNextLevel to level up</span>
+                </div>
+                <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700">
+                    <div class="h-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-400" style="width: @Model.RewardSummary.LevelProgressPercent%"></div>
+                </div>
+            </div>
+
+            <h3 class="mt-4 text-sm font-semibold text-slate-800 dark:text-slate-200">Recent Badges</h3>
+            @if (!Model.RewardSummary.RecentBadges.Any())
+            {
+                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Unlock your first badge by building a 3-day streak.</p>
+            }
+            else
+            {
+                <ul class="mt-2 space-y-2">
+                    @foreach (var badge in Model.RewardSummary.RecentBadges)
+                    {
+                        <li class="rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2 dark:border-slate-700 dark:bg-slate-900/70">
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">@badge.Title</p>
+                                <span class="text-xs font-semibold text-emerald-500">+@badge.Points</span>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">@badge.HabitTitle • @badge.AwardedAtUtc.ToLocalTime().ToString("MMM dd")</p>
+                        </li>
+                    }
+                </ul>
+            }
+
+            <h3 class="mt-4 text-sm font-semibold text-slate-800 dark:text-slate-200">Upcoming Milestones</h3>
+            <div class="mt-2 flex flex-wrap gap-2">
+                @foreach (var milestone in Model.RewardSummary.UpcomingMilestones)
+                {
+                    <span class="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                        @milestone.TargetStreak-day @milestone.Title (+@milestone.BonusPoints)
+                    </span>
+                }
+            </div>
+        </article>
+
+        <article class="panel-card xl:col-span-2">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Psychological Boost</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Detailed execution protocol tailored to your current state.</p>
+
+            <div class="mt-3 flex flex-wrap gap-2">
+                @foreach (var option in Model.MentalStateOptions)
+                {
+                    var label = option.Replace("_", " ");
+                    var isActive = string.Equals(option, Model.SelectedMentalState, StringComparison.OrdinalIgnoreCase);
+                    <a asp-controller="Dashboard" asp-action="Index" asp-route-state="@option" class="library-filter-btn @(isActive ? "is-active" : string.Empty)">@label</a>
+                }
+            </div>
+
+            <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">@Model.PsychologyIntroLine</p>
+
+            <ul class="mt-3 space-y-3">
+                @foreach (var tip in Model.PsychologicalTips)
+                {
+                    <li class="rounded-xl border border-slate-200/70 bg-slate-50/80 px-3 py-3 dark:border-slate-700 dark:bg-slate-800/70">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">@tip.Title</p>
+                            <span class="rounded-lg bg-slate-200/80 px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                                @tip.TimeWindow
+                            </span>
+                        </div>
+
+                        <p class="mt-2 text-xs text-slate-600 dark:text-slate-300"><span class="font-semibold text-slate-700 dark:text-slate-200">Objective:</span> @tip.Objective</p>
+
+                        <ol class="mt-2 list-decimal space-y-1 pl-4 text-xs text-slate-600 dark:text-slate-300">
+                            @foreach (var step in tip.Steps)
+                            {
+                                <li>@step</li>
+                            }
+                        </ol>
+
+                        <div class="mt-3 space-y-1">
+                            <p class="text-xs text-slate-600 dark:text-slate-300"><span class="font-semibold text-slate-700 dark:text-slate-200">If-Then:</span> @tip.IfThenPlan</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-300"><span class="font-semibold text-slate-700 dark:text-slate-200">Recovery:</span> @tip.RecoveryStep</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-300"><span class="font-semibold text-slate-700 dark:text-slate-200">Why this works:</span> @tip.WhyItWorks</p>
+                        </div>
+
+                        <p class="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-300">@tip.ActionPrompt</p>
+                        <p class="mt-1 text-[11px] italic text-slate-500 dark:text-slate-400">Reflection: @tip.ReflectionPrompt</p>
+                    </li>
+                }
+            </ul>
+        </article>
+    </div>
+
+    <div class="grid gap-5 xl:grid-cols-5">
+        <article class="panel-card xl:col-span-3">
+            <div class="flex items-center justify-between gap-3">
+                <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Category Progress</h2>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Live today</span>
+            </div>
+
+            @if (!Model.CategoryProgress.Any())
+            {
+                <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">No category progress available yet.</p>
+            }
+            else
+            {
+                <div class="mt-4 space-y-3">
+                    @foreach (var item in Model.CategoryProgress)
+                    {
+                        <div>
+                            <div class="mb-1 flex items-center justify-between text-xs">
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">@item.CategoryName</span>
+                                <span class="text-slate-500 dark:text-slate-400">@item.Completed/@item.Total • @item.CompletionPercent%</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-slate-200/70 dark:bg-slate-700">
+                                <div class="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" style="width: @item.CompletionPercent%"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </article>
+
+        <article class="panel-card xl:col-span-2">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Recent Achievements</h2>
+            @if (!Model.RecentAchievements.Any())
+            {
+                <p class="mt-4 text-sm text-slate-500 dark:text-slate-400">Complete habits consistently to unlock achievements.</p>
+            }
+            else
+            {
+                <ul class="mt-4 space-y-3">
+                    @foreach (var achievement in Model.RecentAchievements)
+                    {
+                        <li class="rounded-xl border border-slate-200/70 bg-slate-50/80 px-3 py-2 dark:border-slate-700 dark:bg-slate-800/70">
+                            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">@achievement.Title</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">@achievement.HabitTitle • @achievement.AwardedAtUtc.ToLocalTime().ToString("MMM dd")</p>
+                        </li>
+                    }
+                </ul>
+            }
+        </article>
+    </div>
+
+    <div class="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 shadow-lg shadow-slate-900/5 dark:border-slate-700 dark:bg-slate-900/80">
+        <div class="border-b border-slate-200/70 px-5 py-4 dark:border-slate-700">
+            <div class="flex items-center justify-between gap-2">
+                <div>
+                    <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Daily Logging</h2>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Single-tap completion with streak feedback.</p>
+                </div>
+                <a asp-controller="Habits" asp-action="Index" class="text-xs font-semibold uppercase tracking-wider text-sky-500 hover:text-sky-600">Manage Habits</a>
+            </div>
+        </div>
+
+        <form id="habitLogTokenForm" method="post" asp-controller="Dashboard" asp-action="Log" class="hidden">
+            @Html.AntiForgeryToken()
+        </form>
+
+        @if (!Model.Habits.Any())
+        {
+            <div class="px-5 py-10 text-center text-slate-500 dark:text-slate-400">
+                No scheduled habits for today. <a class="font-semibold text-emerald-500" asp-controller="Habits" asp-action="Create">Create a new habit</a>.
+            </div>
+        }
+        else
+        {
+            <ul class="divide-y divide-slate-200/70 dark:divide-slate-700">
+                @foreach (var habit in Model.Habits)
+                {
+                    <li class="habit-row px-5 py-4 transition duration-300 @(habit.CompletedToday ? "is-complete" : string.Empty)" data-habit-id="@habit.HabitId">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="habit-title text-base font-medium text-slate-900 dark:text-slate-100">@habit.Title</p>
+                                @if (!string.IsNullOrWhiteSpace(habit.Description))
+                                {
+                                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">@habit.Description</p>
+                                }
+                                <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                                    <span class="rounded-lg bg-slate-100 px-2 py-1 font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">@habit.CategoryName</span>
+                                    <span class="streak-badge rounded-lg bg-orange-100 px-2 py-1 font-semibold text-orange-700 dark:bg-orange-500/20 dark:text-orange-300" data-streak-count>@habit.CurrentStreak day streak</span>
+                                    @if (habit.ShowFireIcon)
+                                    {
+                                        <span class="rounded-lg bg-rose-100 px-2 py-1 font-semibold text-rose-700 dark:bg-rose-500/20 dark:text-rose-300">🔥 Hot streak</span>
+                                    }
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                class="habit-toggle inline-flex h-10 w-10 items-center justify-center rounded-xl border text-sm transition duration-300 @(habit.CompletedToday ? "border-emerald-400 bg-emerald-500 text-slate-900" : "border-slate-300 bg-white text-slate-500 hover:scale-105 hover:border-emerald-400 hover:text-emerald-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300")"
+                                data-habit-id="@habit.HabitId"
+                                aria-label="Mark @habit.Title as complete"
+                                @(habit.CompletedToday ? "disabled" : string.Empty)>
+                                <i class="fa-solid @(habit.CompletedToday ? "fa-check" : "fa-plus")"></i>
+                            </button>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</section>

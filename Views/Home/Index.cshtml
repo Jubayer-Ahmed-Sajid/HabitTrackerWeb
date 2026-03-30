@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Build Better Habits";
+}
+
+<section class="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white/90 p-6 shadow-xl shadow-slate-900/5 sm:p-8 dark:border-slate-700 dark:bg-slate-900/80">
+    <div class="hero-blur hero-blur-cyan"></div>
+    <div class="hero-blur hero-blur-orange"></div>
+
+    <div class="relative z-10 max-w-2xl">
+        <p class="mb-3 inline-flex rounded-full border border-emerald-300/60 bg-emerald-100/80 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-emerald-700 dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-300">
+            Deep Work Habit System
+        </p>
+        <h1 class="font-display text-3xl font-semibold leading-tight tracking-tight text-slate-900 sm:text-4xl dark:text-slate-100 lg:text-5xl">
+            The Focus Workspace for Building Lasting Habits
+        </h1>
+        <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+            Log your habits in seconds, protect your streaks, and visualize momentum with analytics that make consistency obvious.
+        </p>
+
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a asp-controller="Account" asp-action="Register" class="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-900 shadow-md shadow-emerald-500/30 transition hover:-translate-y-0.5 hover:shadow-lg">
+                Start Building
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">
+                Sign In
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="mt-8 grid gap-4 sm:grid-cols-3">
+    <article class="panel-card">
+        <h2 class="font-display text-lg font-semibold">Focus Dashboard</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Scan today at a glance, then complete each habit with one click.</p>
+    </article>
+    <article class="panel-card">
+        <h2 class="font-display text-lg font-semibold">Streak Intelligence</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Track current streak, longest streak, and milestones automatically.</p>
+    </article>
+    <article class="panel-card">
+        <h2 class="font-display text-lg font-semibold">Actionable Analytics</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">See weekly consistency bars and completion trends over time.</p>
+    </article>
+</section>

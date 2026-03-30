@@ -1,0 +1,569 @@
+@{
+    ViewData["Title"] = "Integrations";
+}
+
+<section class="space-y-6" data-integrations-page="true">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <h1 class="font-display text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">External Integrations</h1>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Link your coding accounts, then map habits for automatic completion from verified activity.</p>
+        </div>
+        <p class="rounded-xl border border-slate-200/80 bg-white/80 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-300">Premium sync controls</p>
+    </div>
+
+    <div class="grid gap-5 xl:grid-cols-5">
+        <article class="panel-card xl:col-span-2">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Link External Account</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Create or edit active account links used by auto-sync workers.</p>
+
+            <form id="externalLinkForm" class="mt-4 space-y-4">
+                <input type="hidden" id="externalLinkId" />
+
+                <div>
+                    <label for="externalSource" class="form-label">Source</label>
+                    <select id="externalSource" class="form-input" required>
+                        <option value="0">Select source</option>
+                        <option value="1">GitHub</option>
+                        <option value="2">LeetCode</option>
+                        <option value="3">Codeforces</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="externalUserName" class="form-label">Username / Handle</label>
+                    <input id="externalUserName" type="text" class="form-input" maxlength="120" placeholder="octocat" required />
+                </div>
+
+                <div>
+                    <label for="externalAccessToken" class="form-label">Access Token (optional)</label>
+                    <input id="externalAccessToken" type="password" class="form-input" maxlength="500" placeholder="Leave empty to keep current token" />
+                </div>
+
+                <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+                    <input id="externalIsActive" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400" checked />
+                    Active link
+                </label>
+
+                <div class="flex flex-wrap gap-2">
+                    <button type="submit" id="externalLinkSaveBtn" class="inline-flex items-center rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-emerald-400">
+                        Save Link
+                    </button>
+                    <button type="button" id="externalLinkResetBtn" class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
+                        Clear
+                    </button>
+                </div>
+            </form>
+        </article>
+
+        <article class="panel-card xl:col-span-3">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Linked Accounts</h2>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Each active link enables matching against external activity.</p>
+                </div>
+                <button type="button" id="refreshLinksBtn" class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
+                    Refresh
+                </button>
+            </div>
+
+            <div class="mt-4 overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                        <tr>
+                            <th class="pb-2">Source</th>
+                            <th class="pb-2">Handle</th>
+                            <th class="pb-2">Status</th>
+                            <th class="pb-2">Last Sync</th>
+                            <th class="pb-2 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="externalLinksBody" class="divide-y divide-slate-200/70 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+        </article>
+    </div>
+
+    <article class="panel-card">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Habit Sync Mapping</h2>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Enable per-habit auto completion using an active linked provider and optional match key.</p>
+            </div>
+            <button type="button" id="refreshMappingsBtn" class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
+                Refresh
+            </button>
+        </div>
+
+        <div class="mt-4 overflow-x-auto">
+            <table class="w-full min-w-[840px] text-left text-sm">
+                <thead class="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                    <tr>
+                        <th class="pb-2">Habit</th>
+                        <th class="pb-2">Category</th>
+                        <th class="pb-2">Auto Sync</th>
+                        <th class="pb-2">Source</th>
+                        <th class="pb-2">Match Key</th>
+                        <th class="pb-2 text-right">Apply</th>
+                    </tr>
+                </thead>
+                <tbody id="habitSyncBody" class="divide-y divide-slate-200/70 dark:divide-slate-700"></tbody>
+            </table>
+        </div>
+    </article>
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const sourceOptions = [
+                { value: 1, label: "GitHub" },
+                { value: 2, label: "LeetCode" },
+                { value: 3, label: "Codeforces" }
+            ];
+
+            const sourceLabelMap = sourceOptions.reduce((map, option) => {
+                map[option.value] = option.label;
+                return map;
+            }, { 0: "None" });
+
+            const externalLinkForm = document.getElementById("externalLinkForm");
+            const externalLinkId = document.getElementById("externalLinkId");
+            const externalSource = document.getElementById("externalSource");
+            const externalUserName = document.getElementById("externalUserName");
+            const externalAccessToken = document.getElementById("externalAccessToken");
+            const externalIsActive = document.getElementById("externalIsActive");
+            const externalLinkResetBtn = document.getElementById("externalLinkResetBtn");
+            const refreshLinksBtn = document.getElementById("refreshLinksBtn");
+            const refreshMappingsBtn = document.getElementById("refreshMappingsBtn");
+            const externalLinksBody = document.getElementById("externalLinksBody");
+            const habitSyncBody = document.getElementById("habitSyncBody");
+
+            if (!externalLinkForm || !externalLinksBody || !habitSyncBody) {
+                return;
+            }
+
+            const showMessage = (message, type = "info", title = "Integrations") => {
+                if (typeof showToast === "function") {
+                    showToast(message, type, title);
+                    return;
+                }
+
+                window.alert(message);
+            };
+
+            const escapeText = (value) => String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+
+            const getSourceLabel = (source) => sourceLabelMap[source] || "Unknown";
+
+            const formatSyncDate = (value) => {
+                if (!value) {
+                    return "Never";
+                }
+
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) {
+                    return "Never";
+                }
+
+                return date.toLocaleString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+            };
+
+            const formatProblem = async (response) => {
+                let payload = null;
+                try {
+                    payload = await response.json();
+                } catch {
+                    payload = null;
+                }
+
+                if (payload?.message) {
+                    return payload.message;
+                }
+
+                if (payload?.errors && typeof payload.errors === "object") {
+                    const firstErrorKey = Object.keys(payload.errors)[0];
+                    const firstError = firstErrorKey ? payload.errors[firstErrorKey]?.[0] : null;
+                    if (firstError) {
+                        return firstError;
+                    }
+                }
+
+                return `Request failed (${response.status}).`;
+            };
+
+            const toSelectOptions = (selectedValue, includeNone) => {
+                const noneOption = includeNone
+                    ? `<option value="0" ${selectedValue === 0 ? "selected" : ""}>None</option>`
+                    : "";
+
+                const providerOptions = sourceOptions
+                    .map((option) => `<option value="${option.value}" ${selectedValue === option.value ? "selected" : ""}>${option.label}</option>`)
+                    .join("");
+
+                return `${noneOption}${providerOptions}`;
+            };
+
+            const resetExternalForm = () => {
+                externalLinkId.value = "";
+                externalSource.value = "0";
+                externalUserName.value = "";
+                externalAccessToken.value = "";
+                externalIsActive.checked = true;
+            };
+
+            const fillExternalForm = (link) => {
+                externalLinkId.value = String(link.id);
+                externalSource.value = String(link.source);
+                externalUserName.value = link.externalUserName || "";
+                externalAccessToken.value = "";
+                externalIsActive.checked = !!link.isActive;
+                externalUserName.focus();
+            };
+
+            const loadExternalLinks = async () => {
+                const response = await fetch("/api/integrations/external-links", {
+                    headers: { Accept: "application/json" },
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    throw new Error(await formatProblem(response));
+                }
+
+                const links = await response.json();
+                return Array.isArray(links) ? links : [];
+            };
+
+            const renderExternalLinks = (links) => {
+                if (!links.length) {
+                    externalLinksBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="py-5 text-center text-sm text-slate-500 dark:text-slate-400">No linked accounts yet.</td>
+                        </tr>`;
+                    return;
+                }
+
+                externalLinksBody.innerHTML = links.map((link) => {
+                    const statusClass = link.isActive
+                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
+                        : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300";
+                    const sourceLabel = escapeText(getSourceLabel(link.source));
+                    const userName = escapeText(link.externalUserName);
+                    const lastSync = escapeText(formatSyncDate(link.lastSyncedAtUtc));
+
+                    return `
+                        <tr>
+                            <td class="py-3 font-medium text-slate-900 dark:text-slate-100">${sourceLabel}</td>
+                            <td class="py-3 text-slate-700 dark:text-slate-300">${userName}</td>
+                            <td class="py-3"><span class="rounded-full px-2 py-1 text-xs font-semibold ${statusClass}">${link.isActive ? "Active" : "Paused"}</span></td>
+                            <td class="py-3 text-slate-600 dark:text-slate-300">${lastSync}</td>
+                            <td class="py-3">
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" class="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700" data-link-action="edit" data-link-id="${link.id}">Edit</button>
+                                    <button type="button" class="rounded-lg border border-red-300 px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-500/60 dark:text-red-300 dark:hover:bg-red-500/10" data-link-action="delete" data-link-id="${link.id}">Delete</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                }).join("");
+            };
+
+            const loadHabitMappings = async () => {
+                const response = await fetch("/api/integrations/habit-sync", {
+                    headers: { Accept: "application/json" },
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    throw new Error(await formatProblem(response));
+                }
+
+                const mappings = await response.json();
+                return Array.isArray(mappings) ? mappings : [];
+            };
+
+            const renderHabitMappings = (mappings) => {
+                if (!mappings.length) {
+                    habitSyncBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="py-5 text-center text-sm text-slate-500 dark:text-slate-400">No habits available for sync mapping.</td>
+                        </tr>`;
+                    return;
+                }
+
+                habitSyncBody.innerHTML = mappings.map((mapping) => {
+                    const selectedSource = Number(mapping.externalSource || 0);
+                    const isAuto = !!mapping.autoCompleteFromExternal;
+                    const habitTitle = escapeText(mapping.habitTitle);
+                    const category = escapeText(mapping.categoryName || "Uncategorized");
+                    const matchKey = escapeText(mapping.externalMatchKey || "");
+                    return `
+                        <tr data-habit-id="${mapping.habitId}">
+                            <td class="py-3 font-medium text-slate-900 dark:text-slate-100">${habitTitle}</td>
+                            <td class="py-3 text-slate-600 dark:text-slate-300">${category}</td>
+                            <td class="py-3">
+                                <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                    <input type="checkbox" class="sync-auto h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-400" ${isAuto ? "checked" : ""} />
+                                    Enabled
+                                </label>
+                            </td>
+                            <td class="py-3">
+                                <select class="form-input sync-source" ${isAuto ? "" : "disabled"}>${toSelectOptions(selectedSource, true)}</select>
+                            </td>
+                            <td class="py-3">
+                                <input type="text" class="form-input sync-match-key" value="${matchKey}" maxlength="120" placeholder="repo:owner/name or problem-id" ${isAuto ? "" : "disabled"} />
+                            </td>
+                            <td class="py-3 text-right">
+                                <button type="button" class="rounded-xl bg-sky-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-400" data-sync-action="save">Save</button>
+                            </td>
+                        </tr>`;
+                }).join("");
+            };
+
+            const refreshAll = async () => {
+                try {
+                    const [links, mappings] = await Promise.all([
+                        loadExternalLinks(),
+                        loadHabitMappings()
+                    ]);
+
+                    renderExternalLinks(links);
+                    renderHabitMappings(mappings);
+                } catch (error) {
+                    showMessage(error?.message || "Could not load integrations data.", "error");
+                }
+            };
+
+            externalLinkForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                const source = Number(externalSource.value || 0);
+                if (!source) {
+                    showMessage("Choose a source before saving.", "warning");
+                    return;
+                }
+
+                const userName = externalUserName.value.trim();
+                if (!userName) {
+                    showMessage("Username is required.", "warning");
+                    return;
+                }
+
+                const idValue = externalLinkId.value.trim();
+                const payload = {
+                    id: idValue ? Number(idValue) : null,
+                    source,
+                    externalUserName: userName,
+                    accessToken: externalAccessToken.value.trim() || null,
+                    isActive: !!externalIsActive.checked
+                };
+
+                try {
+                    const response = await fetch("/api/integrations/external-links", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Accept: "application/json"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(await formatProblem(response));
+                    }
+
+                    resetExternalForm();
+                    const links = await loadExternalLinks();
+                    renderExternalLinks(links);
+                    const mappings = await loadHabitMappings();
+                    renderHabitMappings(mappings);
+                    showMessage("External link saved.", "success");
+                } catch (error) {
+                    showMessage(error?.message || "Could not save external link.", "error");
+                }
+            });
+
+            externalLinkResetBtn?.addEventListener("click", () => resetExternalForm());
+
+            refreshLinksBtn?.addEventListener("click", async () => {
+                try {
+                    const links = await loadExternalLinks();
+                    renderExternalLinks(links);
+                    showMessage("Linked accounts refreshed.", "info");
+                } catch (error) {
+                    showMessage(error?.message || "Could not refresh linked accounts.", "error");
+                }
+            });
+
+            refreshMappingsBtn?.addEventListener("click", async () => {
+                try {
+                    const mappings = await loadHabitMappings();
+                    renderHabitMappings(mappings);
+                    showMessage("Habit sync mappings refreshed.", "info");
+                } catch (error) {
+                    showMessage(error?.message || "Could not refresh sync mappings.", "error");
+                }
+            });
+
+            externalLinksBody.addEventListener("click", async (event) => {
+                const trigger = event.target.closest("button[data-link-action]");
+                if (!trigger) {
+                    return;
+                }
+
+                const linkId = Number(trigger.getAttribute("data-link-id") || 0);
+                if (!linkId) {
+                    return;
+                }
+
+                const action = trigger.getAttribute("data-link-action");
+
+                if (action === "edit") {
+                    try {
+                        const links = await loadExternalLinks();
+                        const link = links.find((item) => item.id === linkId);
+                        if (!link) {
+                            showMessage("Selected link was not found.", "warning");
+                            return;
+                        }
+
+                        fillExternalForm(link);
+                        showMessage("Editing selected link.", "info");
+                    } catch (error) {
+                        showMessage(error?.message || "Could not load selected link.", "error");
+                    }
+
+                    return;
+                }
+
+                if (action === "delete") {
+                    const confirmed = window.confirm("Delete this external link?");
+                    if (!confirmed) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/integrations/external-links/${linkId}`, {
+                            method: "DELETE",
+                            headers: { Accept: "application/json" },
+                            credentials: "same-origin"
+                        });
+
+                        if (!response.ok && response.status !== 404) {
+                            throw new Error(await formatProblem(response));
+                        }
+
+                        const [links, mappings] = await Promise.all([
+                            loadExternalLinks(),
+                            loadHabitMappings()
+                        ]);
+                        renderExternalLinks(links);
+                        renderHabitMappings(mappings);
+                        showMessage("External link removed.", "success");
+                    } catch (error) {
+                        showMessage(error?.message || "Could not delete external link.", "error");
+                    }
+                }
+            });
+
+            habitSyncBody.addEventListener("change", (event) => {
+                const toggle = event.target.closest(".sync-auto");
+                if (!toggle) {
+                    return;
+                }
+
+                const row = toggle.closest("tr");
+                if (!row) {
+                    return;
+                }
+
+                const sourceSelect = row.querySelector(".sync-source");
+                const matchInput = row.querySelector(".sync-match-key");
+                const enabled = toggle.checked;
+
+                if (sourceSelect) {
+                    sourceSelect.disabled = !enabled;
+                    if (!enabled) {
+                        sourceSelect.value = "0";
+                    }
+                }
+
+                if (matchInput) {
+                    matchInput.disabled = !enabled;
+                    if (!enabled) {
+                        matchInput.value = "";
+                    }
+                }
+            });
+
+            habitSyncBody.addEventListener("click", async (event) => {
+                const saveBtn = event.target.closest("button[data-sync-action='save']");
+                if (!saveBtn) {
+                    return;
+                }
+
+                const row = saveBtn.closest("tr[data-habit-id]");
+                if (!row) {
+                    return;
+                }
+
+                const habitId = Number(row.getAttribute("data-habit-id") || 0);
+                const autoToggle = row.querySelector(".sync-auto");
+                const sourceSelect = row.querySelector(".sync-source");
+                const matchInput = row.querySelector(".sync-match-key");
+
+                if (!habitId || !autoToggle || !sourceSelect || !matchInput) {
+                    return;
+                }
+
+                const isEnabled = autoToggle.checked;
+                const source = Number(sourceSelect.value || 0);
+                const matchKey = matchInput.value.trim();
+
+                if (isEnabled && !source) {
+                    showMessage("Select a source for enabled auto sync.", "warning");
+                    return;
+                }
+
+                const payload = {
+                    autoCompleteFromExternal: isEnabled,
+                    externalSource: isEnabled ? source : 0,
+                    externalMatchKey: isEnabled && matchKey ? matchKey : null
+                };
+
+                try {
+                    const response = await fetch(`/api/integrations/habits/${habitId}/sync`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Accept: "application/json"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(await formatProblem(response));
+                    }
+
+                    showMessage("Habit sync mapping updated.", "success");
+                } catch (error) {
+                    showMessage(error?.message || "Could not update sync mapping.", "error");
+                }
+            });
+
+            resetExternalForm();
+            void refreshAll();
+        })();
+    </script>
+}

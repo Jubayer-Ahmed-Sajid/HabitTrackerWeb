@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  HabitTrackerWeb -> C:\Projects\HabitTrackerWeb\bin\Debug\net9.0\HabitTrackerWeb.dll
+  HabitTrackerWeb.Tests -> C:\Projects\HabitTrackerWeb\HabitTrackerWeb.Tests\bin\Debug\net9.0\HabitTrackerWeb.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.07

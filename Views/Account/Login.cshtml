@@ -1,0 +1,51 @@
+@model HabitTrackerWeb.ViewModels.Account.LoginViewModel
+@{
+    ViewData["Title"] = "Sign In";
+}
+
+<section class="mx-auto max-w-md">
+    <div class="panel-card relative overflow-hidden">
+        <div class="hero-blur hero-blur-cyan"></div>
+        <div class="relative z-10">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Welcome Back</p>
+            <h1 class="mt-1 font-display text-3xl font-semibold text-slate-900 dark:text-slate-100">Sign In</h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Get back into your habit workspace.</p>
+
+            <form asp-action="Login" method="post" class="mt-6 space-y-4">
+                @Html.AntiForgeryToken()
+                <input asp-for="ReturnUrl" type="hidden" />
+                <div asp-validation-summary="ModelOnly" class="form-error"></div>
+
+                <div>
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-input" autocomplete="username" />
+                    <span asp-validation-for="Email" class="form-error"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-input" autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="form-error"></span>
+                </div>
+
+                <label class="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                    <input asp-for="RememberMe" class="h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500" />
+                    Remember me
+                </label>
+
+                <button type="submit" class="w-full rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md">
+                    Sign In
+                </button>
+            </form>
+
+            <p class="mt-5 text-sm text-slate-600 dark:text-slate-300">
+                New here?
+                <a asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" class="font-semibold text-sky-500 hover:text-sky-600">Create an account</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

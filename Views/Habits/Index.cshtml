@@ -1,0 +1,102 @@
+@model HabitListViewModel
+@{
+    ViewData["Title"] = "Habit Library";
+}
+
+<section class="space-y-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+            <h1 class="font-display text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Habit Library</h1>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage all habits, schedules, and status.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <a asp-controller="Dashboard" asp-action="Index" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Focus Board</a>
+            <a asp-action="Create" class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:shadow-md">New Habit</a>
+        </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-3">
+        <article class="panel-card metric-card">
+            <p class="metric-label">Total Habits</p>
+            <p class="metric-value text-sky-500">@Model.Habits.Count</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Active</p>
+            <p class="metric-value text-emerald-500">@Model.Habits.Count(h => h.IsActive)</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Hot Streaks</p>
+            <p class="metric-value text-orange-500">@Model.Habits.Count(h => h.CurrentStreak >= 3)</p>
+        </article>
+    </div>
+
+    <div class="panel-card">
+        <div class="flex flex-wrap items-center gap-2">
+            <div class="relative w-full flex-1 sm:min-w-[240px]">
+                <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-3 text-slate-400"></i>
+                <input id="habitSearch" type="text" class="form-input pl-9" placeholder="Search habits, category, or frequency" />
+            </div>
+            <button type="button" class="library-filter-btn is-active" data-filter="all">All</button>
+            <button type="button" class="library-filter-btn" data-filter="active">Active</button>
+            <button type="button" class="library-filter-btn" data-filter="archived">Archived</button>
+        </div>
+    </div>
+
+    @if (TempData["StatusMessage"] is string message)
+    {
+        <div class="rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300">
+            @message
+        </div>
+    }
+
+    <div class="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 shadow-lg shadow-slate-900/5 dark:border-slate-700 dark:bg-slate-900/80" data-habit-library="true">
+        <div class="overflow-x-auto">
+        <table class="min-w-[760px] w-full text-left text-sm">
+            <thead class="border-b border-slate-200/70 bg-slate-50/80 text-xs uppercase tracking-widest text-slate-500 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-400">
+                <tr>
+                    <th class="px-4 py-3">Habit</th>
+                    <th class="px-4 py-3">Frequency</th>
+                    <th class="px-4 py-3">Category</th>
+                    <th class="px-4 py-3">Streak</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200/70 dark:divide-slate-700">
+                @foreach (var habit in Model.Habits)
+                {
+                    <tr data-habit-row="true" data-status="@(habit.IsActive ? "active" : "archived")" data-search="@($"{habit.Title} {habit.Description} {habit.CategoryName} {habit.Frequency}".ToLowerInvariant())">
+                        <td class="px-4 py-3">
+                            <p class="font-medium text-slate-900 dark:text-slate-100">@habit.Title</p>
+                            @if (!string.IsNullOrWhiteSpace(habit.Description))
+                            {
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">@habit.Description</p>
+                            }
+                        </td>
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">@habit.Frequency</td>
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">@habit.CategoryName</td>
+                        <td class="px-4 py-3 font-semibold text-orange-500">@habit.CurrentStreak</td>
+                        <td class="px-4 py-3">
+                            <span class="rounded-lg px-2 py-1 text-xs font-semibold @(habit.IsActive ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300" : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300")">
+                                @(habit.IsActive ? "Active" : "Archived")
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex justify-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@habit.Id" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800">Edit</a>
+                                @if (habit.IsActive)
+                                {
+                                    <form asp-action="Deactivate" asp-route-id="@habit.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="rounded-lg border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-rose-500/40 dark:text-rose-300 dark:hover:bg-rose-500/10">Archive</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+</section>

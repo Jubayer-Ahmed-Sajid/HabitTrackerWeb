@@ -1,0 +1,344 @@
+@model AnalyticsViewModel
+@{
+    ViewData["Title"] = "Analytics";
+}
+
+<section class="space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <h1 class="font-display text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">Performance Analytics</h1>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Real completion intelligence across trend, consistency, and category execution.</p>
+        </div>
+        <div class="w-full overflow-x-auto sm:w-auto">
+        <div class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 p-1 text-sm dark:border-slate-700 dark:bg-slate-900/80">
+            <a asp-action="Index" asp-route-days="14" class="range-pill @(Model.SelectedRangeDays == 14 ? "is-active" : string.Empty)">14D</a>
+            <a asp-action="Index" asp-route-days="30" class="range-pill @(Model.SelectedRangeDays == 30 ? "is-active" : string.Empty)">30D</a>
+            <a asp-action="Index" asp-route-days="90" class="range-pill @(Model.SelectedRangeDays == 90 ? "is-active" : string.Empty)">90D</a>
+        </div>
+        </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+        <article class="panel-card metric-card">
+            <p class="metric-label">Active Habits</p>
+            <p class="metric-value text-sky-500">@Model.ActiveHabits</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Total Completions</p>
+            <p class="metric-value text-emerald-500">@Model.TotalCompletions</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Daily Avg Completion</p>
+            <p class="metric-value text-orange-500">@Model.AverageDailyCompletionPercent%</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Current ELO</p>
+            <p class="metric-value text-indigo-500">@Model.CurrentEloRating</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Peak ELO</p>
+            <p class="metric-value text-fuchsia-500">@Model.PeakEloRating</p>
+        </article>
+        <article class="panel-card metric-card">
+            <p class="metric-label">Best Day</p>
+            <p class="text-lg font-semibold text-slate-900 dark:text-slate-100">@Model.BestDayLabel</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">@Model.BestDayCompletions completions</p>
+            <p class="mt-1 text-xs text-amber-600 dark:text-amber-300">@Model.HotStreakHabits hot streak habits</p>
+        </article>
+    </div>
+
+    <div class="grid gap-5 lg:grid-cols-2">
+        <article class="panel-card">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Weekly Consistency</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Completion percentage over your last 7 days.</p>
+            <div class="mt-4 h-56 sm:h-64">
+                <canvas id="weeklyConsistencyChart"></canvas>
+            </div>
+        </article>
+
+        <article class="panel-card">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">@Model.SelectedRangeDays-Day Trend</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Habit completions per day across selected range.</p>
+            <div class="mt-4 h-56 sm:h-64">
+                <canvas id="completionTrendChart"></canvas>
+            </div>
+        </article>
+    </div>
+
+    <div class="grid gap-5 lg:grid-cols-5">
+        <article class="panel-card lg:col-span-3">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Category Performance</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Completion rate by category in the selected range.</p>
+            <div class="mt-4 h-56 sm:h-64">
+                <canvas id="categoryPerformanceChart"></canvas>
+            </div>
+
+            <div class="mt-5 overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                        <tr>
+                            <th class="pb-2">Category</th>
+                            <th class="pb-2">Completed</th>
+                            <th class="pb-2">Scheduled</th>
+                            <th class="pb-2">Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200/70 dark:divide-slate-700">
+                        @foreach (var category in Model.CategoryPerformance)
+                        {
+                            <tr>
+                                <td class="py-2 font-medium text-slate-900 dark:text-slate-100">@category.CategoryName</td>
+                                <td class="py-2 text-slate-600 dark:text-slate-300">@category.CompletedCount</td>
+                                <td class="py-2 text-slate-600 dark:text-slate-300">@category.ScheduledCount</td>
+                                <td class="py-2 font-semibold text-emerald-500">@category.CompletionPercent%</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="panel-card lg:col-span-2">
+            <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Insights</h2>
+            <ul class="mt-4 space-y-3">
+                @foreach (var insight in Model.Insights)
+                {
+                    <li class="rounded-xl border border-slate-200/70 bg-slate-50/80 px-3 py-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-300">
+                        @insight
+                    </li>
+                }
+            </ul>
+
+            <h3 class="mt-6 font-display text-base font-semibold text-slate-900 dark:text-slate-100">Recent Achievements</h3>
+            @if (!Model.RecentAchievements.Any())
+            {
+                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">No achievements yet in this cycle.</p>
+            }
+            else
+            {
+                <ul class="mt-3 space-y-2">
+                    @foreach (var item in Model.RecentAchievements)
+                    {
+                        <li class="rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2 dark:border-slate-700 dark:bg-slate-900/70">
+                            <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">@item.Title</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">@item.HabitTitle • @item.AwardedAtUtc.ToLocalTime().ToString("MMM dd")</p>
+                        </li>
+                    }
+                </ul>
+            }
+        </article>
+    </div>
+
+    <article class="panel-card">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">365-Day Contribution Heatmap</h2>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Each tile represents one day of completion activity and ELO gain.</p>
+            </div>
+            <p id="heatmapSummary" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Loading contribution map...</p>
+        </div>
+
+        <div class="mt-4 overflow-x-auto">
+            <div id="heatmapGrid" class="heatmap-grid" aria-live="polite"></div>
+        </div>
+
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <p>Less</p>
+            <div class="heatmap-legend">
+                <span class="heatmap-cell intensity-0"></span>
+                <span class="heatmap-cell intensity-1"></span>
+                <span class="heatmap-cell intensity-2"></span>
+                <span class="heatmap-cell intensity-3"></span>
+                <span class="heatmap-cell intensity-4"></span>
+            </div>
+            <p>More</p>
+        </div>
+    </article>
+
+    <article class="panel-card overflow-hidden">
+        <h2 class="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">Streak Breakdown</h2>
+        <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                    <tr>
+                        <th class="pb-2">Habit</th>
+                        <th class="pb-2">Current</th>
+                        <th class="pb-2">Longest</th>
+                        <th class="pb-2">30-day Completion</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200/70 dark:divide-slate-700">
+                    @foreach (var row in Model.HabitStats)
+                    {
+                        <tr>
+                            <td class="py-3 font-medium text-slate-900 dark:text-slate-100">@row.HabitTitle</td>
+                            <td class="py-3 font-semibold text-orange-500">@row.CurrentStreak @(row.CurrentStreak >= 3 ? "🔥" : string.Empty)</td>
+                            <td class="py-3 text-slate-700 dark:text-slate-300">@row.LongestStreak</td>
+                            <td class="py-3 text-emerald-600 dark:text-emerald-300">@row.CompletionRate30Days%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const weeklyLabels = @Html.Raw(Model.WeeklyLabelsJson);
+        const weeklyCompletion = @Html.Raw(Model.WeeklyCompletionJson);
+        const trendLabels = @Html.Raw(Model.TrendLabelsJson);
+        const trendData = @Html.Raw(Model.TrendDataJson);
+        const categoryLabels = @Html.Raw(Model.CategoryLabelsJson);
+        const categoryCompletion = @Html.Raw(Model.CategoryCompletionJson);
+        const heatmapEndpoint = '@Url.Action("Heatmap", "Analytics")?days=365';
+
+        const weeklyCtx = document.getElementById("weeklyConsistencyChart");
+        if (weeklyCtx) {
+            new Chart(weeklyCtx, {
+                type: "bar",
+                data: {
+                    labels: weeklyLabels,
+                    datasets: [{
+                        label: "Completion %",
+                        data: weeklyCompletion,
+                        backgroundColor: "rgba(16, 185, 129, 0.55)",
+                        borderColor: "rgba(5, 150, 105, 1)",
+                        borderWidth: 1.5,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        const trendCtx = document.getElementById("completionTrendChart");
+        if (trendCtx) {
+            new Chart(trendCtx, {
+                type: "line",
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: "Habits Completed",
+                        data: trendData,
+                        fill: true,
+                        tension: 0.3,
+                        backgroundColor: "rgba(249, 115, 22, 0.15)",
+                        borderColor: "rgba(249, 115, 22, 1)",
+                        pointRadius: 2,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        const categoryCtx = document.getElementById("categoryPerformanceChart");
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: "bar",
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: "Completion %",
+                        data: categoryCompletion,
+                        backgroundColor: [
+                            "rgba(14, 165, 233, 0.55)",
+                            "rgba(16, 185, 129, 0.55)",
+                            "rgba(249, 115, 22, 0.55)",
+                            "rgba(244, 114, 182, 0.55)",
+                            "rgba(168, 85, 247, 0.55)"
+                        ],
+                        borderWidth: 1.2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        const heatmapGrid = document.getElementById("heatmapGrid");
+        const heatmapSummary = document.getElementById("heatmapSummary");
+
+        const setHeatmapSummary = (message) => {
+            if (heatmapSummary) {
+                heatmapSummary.textContent = message;
+            }
+        };
+
+        const makeDateLabel = (isoDate) => {
+            const parsed = new Date(`${isoDate}T00:00:00`);
+            return parsed.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            });
+        };
+
+        const renderHeatmap = async () => {
+            if (!heatmapGrid) {
+                return;
+            }
+
+            try {
+                const response = await fetch(heatmapEndpoint, {
+                    headers: {
+                        Accept: "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Heatmap request failed.");
+                }
+
+                const points = await response.json();
+                if (!Array.isArray(points) || points.length === 0) {
+                    heatmapGrid.innerHTML = "<p class='text-sm text-slate-500 dark:text-slate-400'>No contribution data yet.</p>";
+                    setHeatmapSummary("No data in selected period");
+                    return;
+                }
+
+                const totalCompletions = points.reduce((total, point) => total + (point.completedHabits || 0), 0);
+                const totalElo = points.reduce((total, point) => total + (point.eloPointsGained || 0), 0);
+
+                heatmapGrid.innerHTML = points.map((point) => {
+                    const level = Number.isInteger(point.intensityLevel) ? point.intensityLevel : 0;
+                    const intensity = Math.max(0, Math.min(4, level));
+                    const dateLabel = makeDateLabel(point.date);
+                    const tooltip = `${dateLabel}: ${point.completedHabits} completions, +${point.eloPointsGained} ELO`;
+                    return `<span class="heatmap-cell intensity-${intensity}" title="${tooltip}" aria-label="${tooltip}"></span>`;
+                }).join("");
+
+                setHeatmapSummary(`${totalCompletions} completions • +${totalElo} ELO over 365 days`);
+            } catch {
+                heatmapGrid.innerHTML = "<p class='text-sm text-red-500'>Could not load heatmap data right now.</p>";
+                setHeatmapSummary("Heatmap unavailable");
+            }
+        };
+
+        void renderHeatmap();
+    </script>
+}
