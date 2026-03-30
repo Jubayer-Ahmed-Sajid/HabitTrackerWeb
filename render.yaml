@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: habittrackerweb
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:${PORT}
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/var/data/habittracker.db
+    disk:
+      name: habittracker-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -59,6 +59,17 @@ html.dark body {
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
 }
 
+.nav-icon-img {
+  width: 1.15rem;
+  height: 1.15rem;
+  object-fit: contain;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.nav-icon-img.is-open {
+  transform: rotate(90deg);
+}
+
 .mobile-nav-link {
   border-radius: 0.7rem;
   padding: 0.55rem 0.7rem;
@@ -77,6 +88,10 @@ html.dark .nav-icon-btn {
   border-color: rgb(71 85 105);
   background: rgba(30, 41, 59, 0.95);
   color: rgb(226 232 240);
+}
+
+html.dark .nav-icon-img {
+  filter: invert(0.92);
 }
 
 html.dark .mobile-nav-link {

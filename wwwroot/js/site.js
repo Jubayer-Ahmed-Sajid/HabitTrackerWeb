@@ -19,7 +19,7 @@ function setupMobileNav() {
 		menu.classList.add("hidden");
 		toggle.setAttribute("aria-expanded", "false");
 		if (icon) {
-			icon.className = "fa-solid fa-bars";
+			icon.classList.remove("is-open");
 		}
 	};
 
@@ -33,7 +33,7 @@ function setupMobileNav() {
 		menu.classList.remove("hidden");
 		toggle.setAttribute("aria-expanded", "true");
 		if (icon) {
-			icon.className = "fa-solid fa-xmark";
+			icon.classList.add("is-open");
 		}
 	};
 
@@ -69,7 +69,8 @@ function setupThemeToggle() {
 	const refreshIcon = () => {
 		const isDark = document.documentElement.classList.contains("dark");
 		if (icon) {
-			icon.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+			icon.src = isDark ? "/icons/sun-2-svgrepo-com.svg" : "/icons/moon-svgrepo-com.svg";
+			icon.alt = isDark ? "Light mode" : "Dark mode";
 		}
 		toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
 		toggle.title = isDark ? "Light mode" : "Dark mode";
@@ -208,13 +209,21 @@ function setupNotificationCenter() {
 
 			latestItems = items;
 
-			items.forEach((item) => {
+			newItems.forEach((item) => {
 				if (!item?.key) {
 					return;
 				}
 
 				knownKeys.add(item.key);
 				unreadKeys.add(item.key);
+			});
+
+			items.forEach((item) => {
+				if (!item?.key) {
+					return;
+				}
+
+				knownKeys.add(item.key);
 			});
 
 			knownKeys = trimSet(knownKeys, 120);

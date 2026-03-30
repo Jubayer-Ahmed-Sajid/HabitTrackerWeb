@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+**/.git/
+**/.vs/
+openclaw_vscode/
+build.log
+kill.log

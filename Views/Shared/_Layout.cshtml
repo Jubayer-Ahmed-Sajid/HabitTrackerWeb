@@ -47,7 +47,6 @@
                     <a asp-controller="Dashboard" asp-action="Index" class="nav-pill">Focus</a>
                     <a asp-controller="Habits" asp-action="Index" class="nav-pill">Habits</a>
                     <a asp-controller="Analytics" asp-action="Index" class="nav-pill">Analytics</a>
-                    <a href="/Integrations" class="nav-pill">Integrations</a>
                 </div>
                 <div class="flex items-center gap-2">
                     @if (User.Identity?.IsAuthenticated ?? false)
@@ -55,7 +54,7 @@
                         <div id="navNotifications" class="relative">
                             <button id="notificationToggle" type="button" class="nav-icon-btn" aria-label="Open notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications">
                                 <span class="relative inline-flex items-center justify-center">
-                                    <i class="fa-solid fa-bell"></i>
+                                    <img src="~/icons/notification-bell-svgrepo-com.svg" alt="Notifications" class="nav-icon-img" />
                                     <span id="notificationBadge" class="absolute -right-2 -top-2 hidden min-w-4 rounded-full bg-emerald-500 px-1 text-center text-[10px] font-bold leading-4 text-white"></span>
                                 </span>
                             </button>
@@ -85,16 +84,16 @@
                     else
                     {
                         <a asp-controller="Account" asp-action="Login" class="nav-icon-btn" aria-label="Sign in for notifications" title="Notifications">
-                            <i class="fa-solid fa-bell"></i>
+                            <img src="~/icons/notification-bell-svgrepo-com.svg" alt="Notifications" class="nav-icon-img" />
                         </a>
                     }
 
                     <button id="themeToggle" type="button" class="nav-icon-btn" aria-label="Toggle theme" title="Theme">
-                        <i id="themeToggleIcon" class="fa-solid fa-moon"></i>
+                        <img id="themeToggleIcon" src="~/icons/moon-svgrepo-com.svg" alt="Theme" class="nav-icon-img" />
                     </button>
 
                     <button id="mobileNavToggle" type="button" class="nav-icon-btn md:hidden" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileNavMenu" title="Menu">
-                        <i id="mobileNavIcon" class="fa-solid fa-bars"></i>
+                        <img id="mobileNavIcon" src="~/icons/menu-alt-1-svgrepo-com.svg" alt="Menu" class="nav-icon-img" />
                     </button>
 
                     <partial name="_LoginPartial" />
@@ -106,7 +105,6 @@
                     <a asp-controller="Dashboard" asp-action="Index" class="mobile-nav-link">Focus</a>
                     <a asp-controller="Habits" asp-action="Index" class="mobile-nav-link">Habits</a>
                     <a asp-controller="Analytics" asp-action="Index" class="mobile-nav-link">Analytics</a>
-                    <a href="/Integrations" class="mobile-nav-link">Integrations</a>
                 </div>
             </div>
         </header>
